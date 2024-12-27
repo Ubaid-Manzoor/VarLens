@@ -25,8 +25,8 @@ function activate(context) {
 			const nodes = traverseFile({ filePath: document.fileName })
 
 			const uniqueFilePath = getUniqueFilePath(document.fileName)
-			const block = nodes.find(node => (node.loc.start.line <= position.line) && (position.line <= node.loc.end.line))
-			
+			const lineNumber = position.line + 1
+			const block = nodes.find(node => (node.loc.start.line <= lineNumber) && (lineNumber <= node.loc.end.line))
 
 			let variables = {}
 			try {
