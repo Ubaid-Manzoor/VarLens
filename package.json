@@ -1,8 +1,9 @@
 {
-  "name": "codecache",
-  "displayName": "codecache",
+  "name": "varlens",
+  "displayName": "VarLens",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "icon": "logo/logo.png",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -10,13 +11,14 @@
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onLanguage:javascript"
   ],
   "main": "./extension.js",
+  "publisher": "ubaid",
   "contributes": {
     "commands": [
       {
-        "command": "codecache.helloWorld",
+        "command": "VarLens.helloWorld",
         "title": "Hello World"
       }
     ]
@@ -25,6 +27,10 @@
     "lint": "eslint .",
     "pretest": "npm run lint",
     "test": "vscode-test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ubaid-Manzoor/VarLens"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

@@ -315,7 +315,7 @@ const traverseFile = ({ filePath }) => {
     const ast = esprima.parseScript(code, { loc: true });
 
 	const scopeStack = [];
-	const functionNodes = []
+	const Nodes = []
     estraverse.traverse(ast, {
         enter: (node, parent) => {
 			// console.log({ node, parent})
@@ -331,7 +331,7 @@ const traverseFile = ({ filePath }) => {
 			if (node.type === 'FunctionDeclaration') {
 				scopeStack.push(node.id.name);
 				nodeObj.scopeChain = scopeStack?.join('.')
-				functionNodes.push(nodeObj)
+				Nodes.push(nodeObj)
 			}
 
 			if (node.type === 'ObjectExpression') {
@@ -346,13 +346,13 @@ const traverseFile = ({ filePath }) => {
 				nodeObj.scopeChain = scopeStack?.join('.')
 				nodeObj.nodeName = node.key.name
 				nodeObj.parameters = node.value.params
-				functionNodes.push(nodeObj);
+				Nodes.push(nodeObj);
 			}
 
 			if (node.type === 'ClassDeclaration') {
 				scopeStack.push(node.id.name);
 				nodeObj.scopeChain = scopeStack?.join('.')
-				functionNodes.push(nodeObj)
+				Nodes.push(nodeObj)
 			}
 	
 			if (node.type === 'MethodDefinition') {
@@ -360,14 +360,18 @@ const traverseFile = ({ filePath }) => {
 				nodeObj.scopeChain = scopeStack?.join('.')
 				nodeObj.nodeName = node.key.name
 				nodeObj.parameters = node.value.params
-				functionNodes.push(nodeObj)
+				Nodes.push(nodeObj)
 			}
 
 			if(node.type === 'BlockStatement' && parent.type === 'IfStatement'){
 				nodeObj.name = `IfBlock(${escodegen.generate(parent.test)})`
 				scopeStack.push(nodeObj.name);
 				nodeObj.scopeChain = scopeStack?.join('.')
-				functionNodes.push(nodeObj)
+				Nodes.push(nodeObj)
+			}
+
+			if(node.type === 'ReturnStatement' ){
+				console.log(node.value)
 			}
         },
 		leave: (node, parent) => {
@@ -384,7 +388,7 @@ const traverseFile = ({ filePath }) => {
         }
     });
 
-	return functionNodes.sort((a, b) => a.blockSize - b.blockSize);
+	return Nodes.sort((a, b) => a.blockSize - b.blockSize);
 }
 const getUniqueFilePath = (filePath) =>{
 	const workspaceFolders = vscode.workspace.workspaceFolders;

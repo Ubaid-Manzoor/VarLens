@@ -1,7 +1,7 @@
 # Debug Communication Flow
 
 ## Initial Setup
-- Extension activated: "codecache" is now active
+- Extension activated: "VarLens" is now active
 - Debug session started
 - Debugger stopped at breakpoint
 
