@@ -8,12 +8,8 @@
 
 - 🔍 **Real-Time Variable Inspection:** Instantly view variable values on hover, no `console.log` needed.  
 - 💾 **Persistent Variable State:** Remembers variable values across debugging sessions — view past states without rerunning the code.  
-- 🛑 **Breakpoint Snapshots:** Captures variable states at breakpoints for later inspection.  
-- 🧩 **Structured Display:** Explore objects and arrays with expandable and collapsible tree views.  
-- ✨ **Code Beautification:** Clear and readable representations of objects and functions.  
-- 📋 **One-Click Copy:** Easily copy variable data directly from the hover tooltip.  
-- 🚦 **Breakpoint-Free Debugging:** Fetch variable values without manual breakpoints.  
-- ⚙️ **Customizable Views:** Adjust settings to match your preferred workflow.  
+- 🛑 **Breakpoint Snapshots:** Captures variable states at breakpoints for later inspection.    
+- 🚦 **Breakpoint-Free Debugging:** Fetch variable values without manual breakpoints.    
 
 ---
 
