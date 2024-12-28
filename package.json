@@ -2,7 +2,7 @@
   "name": "varlens",
   "displayName": "VarLens",
   "description": "",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "icon": "logo/logo.png",
   "engines": {
     "vscode": "^1.96.0"
@@ -15,14 +15,7 @@
   ],
   "main": "./extension.js",
   "publisher": "ubaid",
-  "contributes": {
-    "commands": [
-      {
-        "command": "VarLens.helloWorld",
-        "title": "Hello World"
-      }
-    ]
-  },
+  "contributes": {},
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",

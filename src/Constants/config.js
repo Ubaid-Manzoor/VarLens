@@ -1,3 +1,3 @@
 module.exports = {
-  CACHE_FILE: "varlen-cache.json",
+  CACHE_FILE: ".varlen-caches.json",
 };

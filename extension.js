@@ -1,3 +1,5 @@
+const { excludeCacheFile } = require("./src/Services/utils");
+
 // The module 'vscode' contains the VS Code extensibility API
 const {
   onDidSendMessageHandler,
@@ -26,6 +28,8 @@ const vscode = require("vscode");
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
+  excludeCacheFile();
+
   const hoverProvider = vscode.languages.registerHoverProvider(["javascript"], {
     async provideHover(document, position) {
       const block = fetchNodeByPosition({ document, position });
