@@ -77,6 +77,7 @@ function activate(context) {
                   currentVariables,
                   nodesPerFile,
                 });
+                console.log(currentScope.length, currentStackTrace.length);
               },
               onError(error) {
                 console.error("Debug adapter error:", error);

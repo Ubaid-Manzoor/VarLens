@@ -55,7 +55,10 @@ const fetchSerializerFunction = (variableName) => {
     
                                 // Handle functions
                                 if (typeof value === 'function') {
-                                    return value.toString()
+                                    return {
+                                        __type: 'Function',
+                                        value: value.toString()
+                                    }
                                 }
     
                                 // Handle regular objects and class instances

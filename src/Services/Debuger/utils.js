@@ -2,12 +2,12 @@ const { CACHE_FILE } = require("../../Constants/config");
 
 const { fetchSerializerFunction } = require("./serialize");
 
-const esprima = require("esprima");
-const estraverse = require("estraverse");
 const escodegen = require("escodegen");
 const vscode = require("vscode");
 const fs = require("fs");
 const path = require("path");
+const { parse } = require("@babel/parser");
+const traverse = require("@babel/traverse");
 
 const getCompleteVariable = async (
   session,
@@ -18,97 +18,132 @@ const getCompleteVariable = async (
   try {
     // This function will be evaluated in the debug context
     const serializerFunction = fetchSerializerFunction(variableName);
-    const response = await session.customRequest("evaluate", {
+    let response = await session.customRequest("evaluate", {
       expression: serializerFunction,
       frameId: frameId,
       context: "watch",
     });
 
-    const result = response.result.replace(/\\\\n/g, "").replace(/\'/g, "");
-    return JSON.parse(result);
+    let result = response.result
+      .replace(/\'/g, "")
+      .replace(/\\\\n/g, "")
+      .replace(/\\\\/g, "\\");
+    return result;
   } catch (error) {
     console.error("Error evaluating variable:", error);
-    return {
-      type: "error",
-      error: error.message,
-    };
+    return undefined;
   }
 };
+const getFullCalleePath = (callee) => {
+  if (callee?.type === "MemberExpression") {
+    const objectPath = getFullCalleePath(callee.object);
+    return objectPath
+      ? `${objectPath}.${callee.property.name}`
+      : callee.property.name;
+  }
+  return callee?.name || "";
+};
+
+const handleArrowFunction = ({ scope }) => {
+  const callee = scope?.parentBlock?.callee;
+
+  if (callee?.type === "MemberExpression") {
+    const fullPath = getFullCalleePath(callee);
+
+    let firstArgument = "";
+    if (scope?.parentBlock?.arguments?.length) {
+      const arg = scope?.parentBlock?.arguments?.[0];
+      if (arg?.type === "StringLiteral") {
+        firstArgument = `.${arg.value}`;
+      } else if (arg?.type === "Identifier") {
+        firstArgument = `.${arg.name}`;
+      }
+    }
+
+    return `${fullPath}${firstArgument}`;
+  } else {
+    return scope?.parentBlock?.id?.name ?? scope?.parent?.id?.name ?? "unknown";
+  }
+};
+
+const handleIfCondition = ({ parent }) => {
+  if (parent?.test?.type === "BooleanLiteral")
+    return `${parent.type}.${parent?.test?.value}`;
+  else return `${parent?.type}(${escodegen.generate(parent.test)})`;
+};
+
 const traverseFile = ({ filePath }) => {
   const code = fs.readFileSync(filePath, "utf-8");
-  const ast = esprima.parseScript(code, { loc: true });
+  const ast = parse(code, {
+    sourceType: "module",
+    plugins: ["jsx", "typescript"],
+  });
 
   const scopeStack = [];
   const Nodes = [];
-  estraverse.traverse(ast, {
-    enter: (node, parent) => {
-      const nodeObj = {
-        scopeChain: "",
-        loc: node?.loc,
-        blockSize: node?.loc?.end?.line - node?.loc?.start?.line,
-        nodeName: node?.id?.name,
-        parameters: node?.params,
-        type: node?.type,
-      };
+  traverse.default(ast, {
+    enter: (data) => {
+      try {
+        const { node, parent, scope } = data;
+        if (node.type === "BlockStatement") {
+          const nodeObj = {
+            scopeChain: "",
+            loc: node?.loc,
+            blockSize: node?.loc?.end?.line - node?.loc?.start?.line,
+            bindings: scope.bindings,
+            type: parent?.type,
+          };
 
-      if (node.type === "FunctionDeclaration") {
-        scopeStack.push(node.id.name);
-        nodeObj.scopeChain = scopeStack?.join(".");
-        Nodes.push(nodeObj);
-      }
+          if (parent?.type === "ArrowFunctionExpression") {
+            const name = handleArrowFunction({ node, parent, scope });
+            nodeObj.nodeName = name;
+          } else if (scope?.block?.type === "FunctionDeclaration") {
+            nodeObj.nodeName = parent?.id?.name;
+          } else if (scope?.block?.type === "FunctionExpression") {
+            if (scope?.parentBlock?.type === "ObjectProperty") {
+              nodeObj.nodeName = scope?.parentBlock?.key?.name;
+            }
+          } else if (parent?.type === "ClassMethod") {
+            nodeObj.nodeName = parent?.key?.name;
+          } else if (parent?.type === "TryStatement") {
+            nodeObj.nodeName = parent?.type;
+          } else if (parent?.type === "CatchClause") {
+            nodeObj.nodeName = parent?.type;
+          } else if (parent?.type === "IfStatement") {
+            nodeObj.nodeName = handleIfCondition({ parent, scope });
+          } else if (parent?.type === "ForStatement") {
+            nodeObj.nodeName = `${parent?.type}(${escodegen.generate(
+              parent.test
+            )})`;
+          } else if (parent?.type === "ForInStatement") {
+            nodeObj.nodeName = `${parent?.type}.${parent.right.name}`;
+          } else if (parent?.type === "ForOfStatement") {
+            nodeObj.nodeName = `${parent?.type}.${parent.right.name}`;
+          } else if (parent?.type === "BlockStatement") {
+          } else if (parent?.type === "WhileStatement") {
+          } else if (parent?.type === "SwitchCase") {
+          } else if (parent?.type === "DoWhileStatement") {
+          } else if (parent?.type === "WithStatement") {
+          } else if (parent?.type === "StaticBlock") {
+          } else {
+            console.log("Block inside an unhandled structure:", parent?.type);
+          }
 
-      if (node.type === "ObjectExpression") {
-        const AnyFunctionExpression = node.properties.some(
-          (p) => p.value.type === "FunctionExpression"
-        );
-        if (AnyFunctionExpression) {
-          scopeStack.push(parent.id.name);
+          scopeStack.push(nodeObj.nodeName);
+          nodeObj.scopeChain = scopeStack?.join(".");
+          //   Nodes.push({ line: node?.loc?.start?.line, node, parent, scope });
+          Nodes.push(nodeObj);
         }
-      }
 
-      if (
-        node.type === "Property" &&
-        node.value.type === "FunctionExpression"
-      ) {
-        scopeStack.push(node.key.name);
-        nodeObj.scopeChain = scopeStack?.join(".");
-        nodeObj.nodeName = node.key.name;
-        nodeObj.parameters = node.value.params;
-        Nodes.push(nodeObj);
-      }
-
-      if (node.type === "ClassDeclaration") {
-        scopeStack.push(node.id.name);
-        nodeObj.scopeChain = scopeStack?.join(".");
-        Nodes.push(nodeObj);
-      }
-
-      if (node.type === "MethodDefinition") {
-        scopeStack.push(node.key.name);
-        nodeObj.scopeChain = scopeStack?.join(".");
-        nodeObj.nodeName = node.key.name;
-        nodeObj.parameters = node.value.params;
-        Nodes.push(nodeObj);
-      }
-
-      if (node.type === "BlockStatement" && parent.type === "IfStatement") {
-        nodeObj.name = `IfBlock(${escodegen.generate(parent.test)})`;
-        scopeStack.push(nodeObj.name);
-        nodeObj.scopeChain = scopeStack?.join(".");
-        Nodes.push(nodeObj);
+        if (node.type === "ClassDeclaration") {
+          scopeStack.push(node?.id?.name);
+        }
+      } catch (error) {
+        console.log(error);
       }
     },
-    leave: (node, parent) => {
-      if (
-        node.type === "FunctionDeclaration" ||
-        node.type === "ClassDeclaration" ||
-        node.type === "MethodDefinition" ||
-        (node.type === "BlockStatement" && parent.type === "IfStatement") ||
-        (node.type === "Property" &&
-          node.value.type === "FunctionExpression") ||
-        (node.type === "ObjectExpression" &&
-          node.properties.some((p) => p.value.type === "FunctionExpression"))
-      ) {
+    exit: (node) => {
+      if (node.type === "BlockStatement" || node.type === "ClassDeclaration") {
         scopeStack.pop();
       }
     },
@@ -166,8 +201,10 @@ const saveNodeToDisk = async (nodes) => {
       }
     }
 
+    console.log({ existingNodes, finalMap });
     // 📌 Step 4: Merge existing data with finalMap
     const mergedData = { ...existingNodes, ...finalMap };
+    console.log({ mergedData });
 
     // 📌 Step 5: Write back to the hidden file
     await fs.writeFileSync(
