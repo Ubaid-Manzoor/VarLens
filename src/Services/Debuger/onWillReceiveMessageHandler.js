@@ -1,9 +1,4 @@
-const onWillReceiveMessageHandler = ({
-  message,
-  currentScope,
-  currentStackTrace,
-  currentVariables,
-}) => {
+const onWillReceiveMessageHandler = ({ message, currentScope, currentStackTrace, currentVariables }) => {
   if (message.type === "request") {
     if (message.command === "stackTrace") {
       currentStackTrace.push({ request: message });

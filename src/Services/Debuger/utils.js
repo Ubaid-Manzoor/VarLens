@@ -9,12 +9,7 @@ const path = require("path");
 const { parse } = require("@babel/parser");
 const traverse = require("@babel/traverse");
 
-const getCompleteVariable = async (
-  session,
-  variableName,
-  variableType,
-  frameId
-) => {
+const getCompleteVariable = async (session, variableName, variableType, frameId) => {
   try {
     // This function will be evaluated in the debug context
     const serializerFunction = fetchSerializerFunction(variableName);
@@ -24,10 +19,7 @@ const getCompleteVariable = async (
       context: "watch",
     });
 
-    let result = response.result
-      .replace(/\'/g, "")
-      .replace(/\\\\n/g, "")
-      .replace(/\\\\/g, "\\");
+    let result = response.result.replace(/\'/g, "").replace(/\\\\n/g, "").replace(/\\\\/g, "\\");
     return result;
   } catch (error) {
     console.error("Error evaluating variable:", error);
@@ -37,9 +29,7 @@ const getCompleteVariable = async (
 const getFullCalleePath = (callee) => {
   if (callee?.type === "MemberExpression") {
     const objectPath = getFullCalleePath(callee.object);
-    return objectPath
-      ? `${objectPath}.${callee.property.name}`
-      : callee.property.name;
+    return objectPath ? `${objectPath}.${callee.property.name}` : callee.property.name;
   }
   return callee?.name || "";
 };
@@ -67,8 +57,7 @@ const handleArrowFunction = ({ scope }) => {
 };
 
 const handleIfCondition = ({ parent }) => {
-  if (parent?.test?.type === "BooleanLiteral")
-    return `${parent.type}.${parent?.test?.value}`;
+  if (parent?.test?.type === "BooleanLiteral") return `${parent.type}.${parent?.test?.value}`;
   else return `${parent?.type}(${escodegen.generate(parent.test)})`;
 };
 
@@ -112,9 +101,7 @@ const traverseFile = ({ filePath }) => {
           } else if (parent?.type === "IfStatement") {
             nodeObj.nodeName = handleIfCondition({ parent, scope });
           } else if (parent?.type === "ForStatement") {
-            nodeObj.nodeName = `${parent?.type}(${escodegen.generate(
-              parent.test
-            )})`;
+            nodeObj.nodeName = `${parent?.type}(${escodegen.generate(parent.test)})`;
           } else if (parent?.type === "ForInStatement") {
             nodeObj.nodeName = `${parent?.type}.${parent.right.name}`;
           } else if (parent?.type === "ForOfStatement") {
@@ -197,7 +184,7 @@ const saveNodeToDisk = async (nodes) => {
     } catch (error) {
       if (error.code !== "ENOENT") {
         console.error("Failed to read the cache file:", error);
-        throw error; // Rethrow unexpected errors
+        existingNodes = {};
       }
     }
 
@@ -207,11 +194,7 @@ const saveNodeToDisk = async (nodes) => {
     console.log({ mergedData });
 
     // 📌 Step 5: Write back to the hidden file
-    await fs.writeFileSync(
-      cacheFilePath,
-      JSON.stringify(mergedData, null, 2),
-      "utf-8"
-    );
+    await fs.writeFileSync(cacheFilePath, JSON.stringify(mergedData, null, 2), "utf-8");
     console.log(`✅ Data saved successfully to ${cacheFilePath}`);
   } catch (error) {
     console.error("❌ Failed to save nodes to disk:", error);

@@ -9,10 +9,7 @@ const path = require("path");
 const fetchNodeByPosition = ({ document, position }) => {
   const nodes = traverseFile({ filePath: document.fileName });
   const lineNumber = position.line + 1;
-  const block = nodes.find(
-    (node) =>
-      node.loc.start.line <= lineNumber && lineNumber <= node.loc.end.line
-  );
+  const block = nodes.find((node) => node.loc.start.line <= lineNumber && lineNumber <= node.loc.end.line);
 
   return block;
 };

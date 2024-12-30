@@ -1,22 +1,11 @@
 const { excludeCacheFile } = require("./src/Services/utils");
 
 // The module 'vscode' contains the VS Code extensibility API
-const {
-  onDidSendMessageHandler,
-} = require("./src/Services/Debuger/OnDidSendMessageHandler");
-const {
-  onWillReceiveMessageHandler,
-} = require("./src/Services/Debuger/onWillReceiveMessageHandler");
+const { onDidSendMessageHandler } = require("./src/Services/Debuger/OnDidSendMessageHandler");
+const { onWillReceiveMessageHandler } = require("./src/Services/Debuger/onWillReceiveMessageHandler");
 
-const {
-  getUniqueFilePath,
-  saveNodeToDisk,
-} = require("./src/Services/Debuger/utils");
-const {
-  fetchNodeByPosition,
-  markdownOnHover,
-  readVariableFromCache,
-} = require("./src/Services/Hover/utils");
+const { getUniqueFilePath, saveNodeToDisk } = require("./src/Services/Debuger/utils");
+const { fetchNodeByPosition, markdownOnHover, readVariableFromCache } = require("./src/Services/Hover/utils");
 
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require("vscode");
@@ -52,46 +41,45 @@ function activate(context) {
     if (session.type === "node" || session.type === "pwa-node") {
       console.log("Started debugging session: Capturing function calls...");
 
-      const debugSessionHandler =
-        vscode.debug.registerDebugAdapterTrackerFactory("*", {
-          createDebugAdapterTracker() {
-            let currentStackTrace = [];
-            let currentScope = [];
-            let currentVariables = [];
-            let nodesPerFile = {};
+      const debugSessionHandler = vscode.debug.registerDebugAdapterTrackerFactory("*", {
+        createDebugAdapterTracker() {
+          let currentStackTrace = [];
+          let currentScope = [];
+          let currentVariables = [];
+          let nodesPerFile = {};
 
-            return {
-              onWillReceiveMessage(message) {
-                onWillReceiveMessageHandler({
-                  message,
-                  currentScope,
-                  currentStackTrace,
-                  currentVariables,
-                });
-              },
-              async onDidSendMessage(message) {
-                await onDidSendMessageHandler({
-                  message,
-                  currentScope,
-                  currentStackTrace,
-                  currentVariables,
-                  nodesPerFile,
-                });
-                console.log(currentScope.length, currentStackTrace.length);
-              },
-              onError(error) {
-                console.error("Debug adapter error:", error);
-              },
-              onExit(code, signal) {
-                console.log("Debug adapter exit:", code, signal);
-              },
-              async onWillStopSession() {
-                await saveNodeToDisk(nodesPerFile);
-                console.log("Stop Session");
-              },
-            };
-          },
-        });
+          return {
+            onWillReceiveMessage(message) {
+              onWillReceiveMessageHandler({
+                message,
+                currentScope,
+                currentStackTrace,
+                currentVariables,
+              });
+            },
+            async onDidSendMessage(message) {
+              await onDidSendMessageHandler({
+                message,
+                currentScope,
+                currentStackTrace,
+                currentVariables,
+                nodesPerFile,
+              });
+              console.log(currentScope.length, currentStackTrace.length);
+            },
+            onError(error) {
+              console.error("Debug adapter error:", error);
+            },
+            onExit(code, signal) {
+              console.log("Debug adapter exit:", code, signal);
+            },
+            async onWillStopSession() {
+              await saveNodeToDisk(nodesPerFile);
+              console.log("Stop Session");
+            },
+          };
+        },
+      });
 
       context.subscriptions.push(debugSessionHandler);
     }

@@ -11,24 +11,14 @@ const excludeCacheFile = () => {
     filesExclude[`**/${CACHE_FILE}`] = true;
 
     // Update settings.json
-    configuration
-      .update(
-        "files.exclude",
-        filesExclude,
-        vscode.ConfigurationTarget.Workspace
-      )
-      .then(
-        () => {
-          vscode.window.showInformationMessage(
-            `✅ '.${CACHE_FILE}' has been added to 'files.exclude' in your workspace settings.`
-          );
-        },
-        (error) => {
-          vscode.window.showErrorMessage(
-            `❌ Failed to update settings: ${error.message}`
-          );
-        }
-      );
+    configuration.update("files.exclude", filesExclude, vscode.ConfigurationTarget.Workspace).then(
+      () => {
+        vscode.window.showInformationMessage(`✅ '.${CACHE_FILE}' has been added to 'files.exclude' in your workspace settings.`);
+      },
+      (error) => {
+        vscode.window.showErrorMessage(`❌ Failed to update settings: ${error.message}`);
+      }
+    );
   }
 };
 
