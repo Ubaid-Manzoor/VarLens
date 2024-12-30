@@ -28,8 +28,7 @@ function activate(context) {
       if (wordRange) {
         const word = document.getText(wordRange);
         const uniqueFilePath = getUniqueFilePath(document.fileName);
-        const uniqueKey = `${uniqueFilePath}.${block.scopeChain}.${word}`; // this will give us the key which will be used on the variable map we got from file
-
+        const uniqueKey = `${uniqueFilePath}.${block.scopeChain}.${word}`.replace(/\.{2,}/g, ".");
         return markdownOnHover(variables[uniqueKey]?.value);
       }
       return null;

@@ -120,12 +120,21 @@ const traverseFile = ({ filePath }) => {
 
           scopeStack.push(nodeObj.nodeName);
           nodeObj.scopeChain = scopeStack?.join(".");
-          //   Nodes.push({ line: node?.loc?.start?.line, node, parent, scope });
+          // Nodes.push({ line: node?.loc?.start?.line, node, parent, scope });
           Nodes.push(nodeObj);
         }
 
         if (node.type === "ClassDeclaration") {
           scopeStack.push(node?.id?.name);
+        }
+        if (node?.type === "Program") {
+          Nodes.push({
+            nodeName: node?.type,
+            scopeChain: "",
+            loc: node?.loc,
+            blockSize: node?.loc?.end?.line - node?.loc?.start?.line,
+            bindings: scope.bindings,
+          });
         }
       } catch (error) {
         console.log(error);
@@ -165,7 +174,8 @@ const saveNodeToDisk = async (nodes) => {
         const { scopeChain, variables } = node;
         if (variables && variables.length > 0) {
           for (const variable of variables) {
-            finalMap[`${uniquePathKey}.${scopeChain}.${variable.name}`] = {
+            const key = `${uniquePathKey}.${scopeChain}.${variable.name}`.replace(/\.{2,}/g, ".");
+            finalMap[key] = {
               type: variable.type,
               value: variable.value,
             };

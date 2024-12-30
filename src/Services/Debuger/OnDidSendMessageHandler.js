@@ -33,24 +33,28 @@ const onDidSendMessageHandler = async ({ message, currentStackTrace, currentScop
     } else if (message.type === "event") {
       if (message.event === "continued") {
         if (currentStackTrace.length > 0) {
-          const uniqueFilePath = getUniqueFilePath(currentStackTrace[0].response.body.stackFrames[0].source.path);
-          if (!nodesPerFile[uniqueFilePath]) {
-            const nodes = traverseFile({
-              filePath: currentStackTrace[0].response.body.stackFrames[0].source.path,
-            });
-            nodesPerFile[uniqueFilePath] = nodes;
+          try {
+            const uniqueFilePath = getUniqueFilePath(currentStackTrace[0].response.body.stackFrames[0].source.path);
+            if (!nodesPerFile[uniqueFilePath]) {
+              const nodes = traverseFile({
+                filePath: currentStackTrace[0].response.body.stackFrames[0].source.path,
+              });
+              nodesPerFile[uniqueFilePath] = nodes;
+            }
+
+            const lineNumber = currentStackTrace[0].response.body.stackFrames[0].line;
+            const block = nodesPerFile[uniqueFilePath].find((node) => node.loc.start.line <= lineNumber && lineNumber <= node.loc.end.line);
+            const variables = currentVariables.find(
+              (v) => v.request.arguments.variablesReference === currentScope[0].response.body.scopes[0].variablesReference
+            ).response.body.variables;
+            block.variables = variables;
+
+            currentStackTrace.length = 0;
+            currentScope.length = 0;
+            currentVariables.length = 0;
+          } catch (error) {
+            console.log(error);
           }
-
-          const lineNumber = currentStackTrace[0].response.body.stackFrames[0].line;
-          const block = nodesPerFile[uniqueFilePath].find((node) => node.loc.start.line <= lineNumber && lineNumber <= node.loc.end.line);
-          const variables = currentVariables.find(
-            (v) => v.request.arguments.variablesReference === currentScope[0].response.body.scopes[0].variablesReference
-          ).response.body.variables;
-          block.variables = variables;
-
-          currentStackTrace.length = 0;
-          currentScope.length = 0;
-          currentVariables.length = 0;
         }
       }
     }
