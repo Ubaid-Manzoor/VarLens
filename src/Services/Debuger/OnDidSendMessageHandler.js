@@ -21,7 +21,7 @@ const onDidSendMessageHandler = async ({ message, currentStackTrace, currentScop
             (v) => v.request.arguments.variablesReference === currentScope?.[0]?.response?.body?.scopes?.[0]?.variablesReference
           )?.response?.body?.variables ?? [];
         for (const variable of currentBlockVariables) {
-          if (variable.type === "global") continue;
+          if (variable.type === "global" || variable.name === "this") continue;
           const frameId = currentStackTrace[0].response.body.stackFrames[0].id;
           if (variable.value === "undefined" || variable.value === undefined) continue;
           const completeValue = await getCompleteVariable(vscode.debug.activeDebugSession, variable.name, variable.type, frameId);

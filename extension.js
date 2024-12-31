@@ -18,12 +18,10 @@ const vscode = require("vscode");
  */
 function activate(context) {
   excludeCacheFile();
-
   const hoverProvider = vscode.languages.registerHoverProvider(["javascript", "typescript"], {
     async provideHover(document, position) {
       const block = fetchNodeByPosition({ document, position });
       const variables = await readVariableFromCache();
-
       const wordRange = document.getWordRangeAtPosition(position);
       if (wordRange) {
         const word = document.getText(wordRange);
@@ -34,19 +32,16 @@ function activate(context) {
       return null;
     },
   });
-
   // Monitor debug sessions to capture function outputs
   vscode.debug.onDidStartDebugSession(async (session) => {
     if (session.type === "node" || session.type === "pwa-node") {
       console.log("Started debugging session: Capturing function calls...");
-
       const debugSessionHandler = vscode.debug.registerDebugAdapterTrackerFactory("*", {
         createDebugAdapterTracker() {
           let currentStackTrace = [];
           let currentScope = [];
           let currentVariables = [];
           let nodesPerFile = {};
-
           return {
             onWillReceiveMessage(message) {
               onWillReceiveMessageHandler({
@@ -78,11 +73,9 @@ function activate(context) {
           };
         },
       });
-
       context.subscriptions.push(debugSessionHandler);
     }
   });
-
   context.subscriptions.push(hoverProvider);
 }
 

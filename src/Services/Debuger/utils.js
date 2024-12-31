@@ -16,7 +16,7 @@ const getCompleteVariable = async (session, variableName, variableType, frameId)
     let response = await session.customRequest("evaluate", {
       expression: serializerFunction,
       frameId: frameId,
-      context: "watch",
+      context: "inline",
     });
 
     let result = response.result.replace(/\'/g, "").replace(/\\\\n/g, "").replace(/\\\\/g, "\\");

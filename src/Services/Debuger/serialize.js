@@ -27,7 +27,7 @@ const fetchSerializerFunction = (variableName) => {
     
                                 // Handle arrays
                                 if (Array.isArray(value)) {
-                                    return value.map(item => serializeValue(item, depth + 1, maxDepth, seen));
+                                    return value.slice(0,1).map(item => serializeValue(item, depth + 1, maxDepth, seen));
                                 }
     
                                 // Handle Map
@@ -86,7 +86,7 @@ const fetchSerializerFunction = (variableName) => {
                                 }
                                 return result;
                             }
-                            JSON.stringify(serializeValue(${variableName}));
+                            JSON.stringify(serializeValue(${variableName}), null, 2);
     `;
 };
 
