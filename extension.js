@@ -35,7 +35,7 @@ function activate(context) {
   // Monitor debug sessions to capture function outputs
   vscode.debug.onDidStartDebugSession(async (session) => {
     if (session.type === "node" || session.type === "pwa-node") {
-      console.log("Started debugging session: Capturing function calls...");
+      vscode.window.showInformationMessage("VarLen is watching you debug session...");
       const debugSessionHandler = vscode.debug.registerDebugAdapterTrackerFactory("*", {
         createDebugAdapterTracker() {
           let currentStackTrace = [];
