@@ -2,7 +2,6 @@ const { CACHE_FILE } = require("../../Constants/config");
 
 const { fetchSerializerFunction } = require("./serialize");
 
-const escodegen = require("escodegen");
 const vscode = require("vscode");
 const fs = require("fs");
 const path = require("path");
@@ -104,7 +103,7 @@ const traverseFile = ({ filePath }) => {
           } else if (parent?.type === "IfStatement") {
             nodeObj.nodeName = handleIfCondition({ parent, scope });
           } else if (parent?.type === "ForStatement") {
-            nodeObj.nodeName = `${parent?.type}(${escodegen.generate(parent.test)})`;
+            nodeObj.nodeName = `${parent?.type}(${generator(parent.test).code})`;
           } else if (parent?.type === "ForInStatement") {
             nodeObj.nodeName = `${parent?.type}.${parent.right.name}`;
           } else if (parent?.type === "ForOfStatement") {
