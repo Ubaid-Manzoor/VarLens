@@ -6,4 +6,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- Initial release
+- Typescript Support
+- Global variables Support
+- More case handled like ForIn ForOf and more.

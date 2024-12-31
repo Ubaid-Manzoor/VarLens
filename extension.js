@@ -19,7 +19,7 @@ const vscode = require("vscode");
 function activate(context) {
   excludeCacheFile();
 
-  const hoverProvider = vscode.languages.registerHoverProvider(["javascript"], {
+  const hoverProvider = vscode.languages.registerHoverProvider(["javascript", "typescript"], {
     async provideHover(document, position) {
       const block = fetchNodeByPosition({ document, position });
       const variables = await readVariableFromCache();
@@ -64,7 +64,6 @@ function activate(context) {
                 currentVariables,
                 nodesPerFile,
               });
-              console.log(currentScope.length, currentStackTrace.length);
             },
             onError(error) {
               console.error("Debug adapter error:", error);

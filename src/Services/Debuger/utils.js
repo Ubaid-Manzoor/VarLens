@@ -8,6 +8,7 @@ const fs = require("fs");
 const path = require("path");
 const { parse } = require("@babel/parser");
 const traverse = require("@babel/traverse");
+const generator = require("@babel/generator").default;
 
 const getCompleteVariable = async (session, variableName, variableType, frameId) => {
   try {
@@ -60,7 +61,7 @@ const handleArrowFunction = ({ scope }) => {
 
 const handleIfCondition = ({ parent }) => {
   if (parent?.test?.type === "BooleanLiteral") return `${parent.type}.${parent?.test?.value}`;
-  else return `${parent?.type}(${escodegen.generate(parent.test)})`;
+  else return `${parent?.type}(${generator(parent.test).code})`;
 };
 
 const traverseFile = ({ filePath }) => {
