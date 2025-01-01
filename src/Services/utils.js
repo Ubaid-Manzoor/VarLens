@@ -1,4 +1,4 @@
-const { CACHE_FILE } = require("../Constants/config");
+const { CACHE_FILE } = require("../Constants/config.js");
 
 const vscode = require("vscode");
 

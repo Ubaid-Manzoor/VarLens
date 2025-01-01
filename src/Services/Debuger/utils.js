@@ -1,6 +1,6 @@
-const { CACHE_FILE } = require("../../Constants/config");
+const { CACHE_FILE } = require("../../Constants/config.js");
 
-const { fetchSerializerFunction } = require("./serialize");
+const { fetchSerializerFunction } = require("./serialize.js");
 
 const vscode = require("vscode");
 const fs = require("fs");

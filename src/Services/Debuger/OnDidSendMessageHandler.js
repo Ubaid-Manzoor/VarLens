@@ -1,4 +1,4 @@
-const { getCompleteVariable, getUniqueFilePath, traverseFile } = require("./utils");
+const { getCompleteVariable, getUniqueFilePath, traverseFile } = require("./utils.js");
 
 const vscode = require("vscode");
 
