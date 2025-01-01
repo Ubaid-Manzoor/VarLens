@@ -9,3 +9,4 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Typescript Support
 - Global variables Support
 - More case handled like ForIn ForOf and more.
+- Added support of inspect view for large objects

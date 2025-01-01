@@ -2,7 +2,7 @@
   "name": "varlens",
   "displayName": "VarLens",
   "description": "",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "icon": "logo/logo.png",
   "engines": {
     "vscode": "^1.96.0"
@@ -16,7 +16,14 @@
   ],
   "main": "./extension.js",
   "publisher": "ubaid",
-  "contributes": {},
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.inspectVariable",
+        "title": "Inspect Variable"
+      }
+    ]
+  },
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",

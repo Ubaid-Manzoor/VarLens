@@ -33,7 +33,10 @@ const markdownOnHover = (variableValue) => {
   hoverContent.isTrusted = true; // Allows richer rendering if needed
   hoverContent.supportHtml = true; // Enable support for inline HTML (if necessary)
 
-  hoverContent.appendMarkdown(`### Variable Details\n`);
+  hoverContent.appendMarkdown(`### VarLens\n`);
+  hoverContent.appendMarkdown(
+    `\n[🔍 Inspect Variable](command:extension.inspectVariable?${encodeURIComponent(JSON.stringify(variableValue))})`
+  );
   hoverContent.appendCodeblock(JSON.stringify(variableValue, null, 2), "json");
 
   return new vscode.Hover(hoverContent);

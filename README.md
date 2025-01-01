@@ -22,8 +22,10 @@ VarLens simplifies debugging, reduces context-switching, and enhances productivi
 
 ## 🧠 **How It Works**
 
-1. **Hover Over Variables:** View real-time values or cached values from previous sessions.
-2. **Breakpoint Memory:** If you added a breakpoint, VarLens remembers the state of variables at that exact moment.
+1. **Breakpoint Memory:** After Starting the Debug session, you will add breakpoint in the block which you want to remember the variable of.
+2. **Cache Data on End Sesso** After you are done with the session just stop the session and your variables will be saved.
+3. **Hover Over Variables:** Now on Hover you will see the value of the variable.
+4. **Inspect Variable** For Large you can simple click on inspect variable on Hover, and you will see proper view of the variable.
 
 ---
 
