@@ -1,54 +1,82 @@
-# 📚 **VarLens – Visualize and Inspect Your Variables with Precision**
+# VarLens 🔍 - Debug Smarter, Code Faster
 
-**VarLens** is an innovative Visual Studio Code extension designed to revolutionize how developers interact with variables during coding and debugging. It provides an intuitive and seamless way to inspect & visualize variable states directly in the editor — even across sessions.
+VarLens is a powerful Visual Studio Code extension that transforms your debugging experience by providing variable inspection and persistent state tracking across debugging sessions.
 
----
+## 🌟 Features
 
-## 🚀 **Key Features**
+### 1. Smart Variable Inspection
+- **Hover Intelligence**: Simply hover over any variable to instantly see its value
+- **Context-Aware**: Understands variable scope and maintains accurate values across different code blocks
+- **Rich Visualization**: View complex objects and arrays in a formatted JSON structure
 
-- 🔍 **Real-Time Variable Inspection:** Instantly view variable values on hover, no `console.log` needed.
-- 💾 **Persistent Variable State:** Remembers variable values across debugging sessions — view past states without rerunning the code.
-- 🛑 **Breakpoint Snapshots:** Captures variable states at breakpoints for later inspection.
+### 2. Advanced Variable Inspector
+- **Interactive JSON Viewer**: Click the 🔍 icon to open a dedicated panel with a full-featured JSON editor
+- **Side-by-Side View**: Inspect variables in a separate panel while keeping your code in view
+- **Tree Navigation**: Easily explore nested objects and arrays with collapsible tree view
 
----
+### 3. Debug Session Memory
+- **Persistent State**: Variables values are cached and preserved across debugging sessions
+- **Scope Recognition**: Maintains variable values with respect to their scope chains
+- **Automatic Tracking**: No configuration needed - just debug as usual!
 
-## 🛠️ **Why VarLens?**
+## 🚀 Getting Started
 
-VarLens simplifies debugging, reduces context-switching, and enhances productivity by offering a seamless variable inspection experience directly in your coding environment.
+1. Install the extension from VS Code Marketplace
+2. Start a debug session in your JavaScript/TypeScript project
+3. Add breakpoints where you want to capture variable states
+4. Once the debug session ends, variable values are automatically cached
+5. Hover over variables to see their values, even after the debug session
 
-> **Focus less on debugging. Focus more on building.** 🚀
+## 💡 Usage Example
 
----
-
-## 🧠 **How It Works**
-
-1. **Breakpoint Memory:** After Starting the Debug session, you will add breakpoint in the block which you want to remember the variable of.
-2. **Cache Data on End Sesso** After you are done with the session just stop the session and your variables will be saved.
-3. **Hover Over Variables:** Now on Hover you will see the value of the variable.
-4. **Inspect Variable** For Large you can simple click on inspect variable on Hover, and you will see proper view of the variable.
-
----
-
-## 📬 **Feedback & Support**
-
-We’d love to hear from you! Whether it's feedback, feature requests, or reporting bugs, feel free to reach out:
-
-📧 **Email**: ubaidmanzoor12@gmail.com
-
----
-
-## 📥 **Installation**
-
-1. Open the **Extensions** tab in VS Code.
-2. Search for **"VarLens"**.
-3. Click **Install**.
-4. Start inspecting variables instantly!
-
-Or use the VS Code CLI:
-
-```sh
-code --install-extension varlens
-
+```javascript
+function calculateTotal(items) {
+    const total = items.reduce((sum, item) => sum + item.price, 0);
+    const tax = total * 0.1;  // Hover over 'total' or 'tax' to see values!
+    return total + tax;
+}
 ```
 
-## Happy Debugging with VarLens! 🧑‍💻✨
+## 🔧 Supported Languages
+- JavaScript
+- TypeScript
+
+## 🎯 Use Cases
+
+1. **Debugging Complex Objects**
+   - Hover over variables to quickly peek at values
+   - Use the inspector for detailed exploration of large objects
+
+2. **State Tracking**
+   - Track variable values across different function calls
+   - Understand how values change throughout your code
+
+3. **Code Review**
+   - Review code with actual runtime values
+   - Understand variable states without running the debugger
+
+## ⚙️ Requirements
+- Visual Studio Code version 1.60.0 or higher
+- Node.js debugging support enabled
+
+## 📝 Notes
+- Variable values are cached in a `.varlens` file in your workspace
+- Cache is automatically cleaned up when needed
+- Supports both simple and complex data types
+
+## 🤝 Contributing
+We welcome contributions! Feel free to:
+- Report bugs
+- Suggest features
+- Submit pull requests
+
+## 📬 Support & Feedback
+- GitHub Issues: [Report Issues](https://github.com/Ubaid-Manzoor/VarLens/issues)
+- Email: ubaidmanzoor12@gmail.com
+
+## 📄 License
+Proprietary License
+
+---
+
+Made with ❤️ by Ubaid Manzoor

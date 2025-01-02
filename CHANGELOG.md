@@ -20,3 +20,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - v2.1 Added Webpack support
 - v2.1 Lower the extension size
+
+### Added
+
+- v2.2 Comprehensive README update with detailed features, usage instructions and examples

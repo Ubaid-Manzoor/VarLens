@@ -1,5 +1,12 @@
-.git
 .vscode
-test/
+node_modules
+out/
+src/
+tsconfig.json
+webpack.config.js
+esbuild.js
+.git
 **/*.test.js
 **/*.spec.js
+.gitignore
+eslint.*
