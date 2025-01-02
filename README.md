@@ -56,7 +56,7 @@ function calculateTotal(items) {
    - Understand variable states without running the debugger
 
 ## ⚙️ Requirements
-- Visual Studio Code version 1.60.0 or higher
+- Visual Studio Code version 1.96.0 or higher
 - Node.js debugging support enabled
 
 ## 📝 Notes
