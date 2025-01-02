@@ -1,5 +1,6 @@
-const { excludeCacheFile } = require("./Services/utils");
+const { CACHE_FILE } = require("./Constants/config.js");
 
+const { excludeCacheFile } = require("./Services/utils.js");
 // The module 'vscode' contains the VS Code extensibility API
 const { onDidSendMessageHandler } = require("./Services/Debuger/OnDidSendMessageHandler.js");
 const { onWillReceiveMessageHandler } = require("./Services/Debuger/onWillReceiveMessageHandler.js");
@@ -18,10 +19,22 @@ const vscode = require("vscode");
  */
 function activate(context) {
   excludeCacheFile();
+
+  let cachedVariables = null;
+
+  // Watch for file changes
+  const cacheFileWatcher = vscode.workspace.createFileSystemWatcher(`**/${CACHE_FILE}`);
+  cacheFileWatcher.onDidChange(async () => {
+    cachedVariables = await readVariableFromCache();
+  });
+
   const hoverProvider = vscode.languages.registerHoverProvider(["javascript", "typescript"], {
     async provideHover(document, position) {
       const block = fetchNodeByPosition({ document, position });
-      const variables = await readVariableFromCache();
+      if (!cachedVariables) {
+        cachedVariables = await readVariableFromCache();
+      }
+      const variables = cachedVariables;
       const wordRange = document.getWordRangeAtPosition(position);
       if (wordRange) {
         const word = document.getText(wordRange);

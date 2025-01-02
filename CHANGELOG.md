@@ -24,3 +24,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Added
 
 - v2.2 Comprehensive README update with detailed features, usage instructions and examples
+
+### Performance
+
+- v2.4 Added in-memory caching to significantly improve hover response time
+- v2.4 Optimized file reading by only reloading cache when file changes

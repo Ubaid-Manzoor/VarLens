@@ -2,7 +2,7 @@
   "name": "varlens",
   "displayName": "VarLens",
   "description": "",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "icon": "logo/logo.png",
   "engines": {
     "vscode": "^1.96.0"
@@ -14,7 +14,7 @@
     "onLanguage:javascript",
     "onLanguage:typescript"
   ],
-  "main": "./dist/extension.js",
+  "main": "./src/extension.js",
   "publisher": "ubaid",
   "contributes": {
     "commands": [
