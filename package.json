@@ -2,10 +2,10 @@
   "name": "varlens",
   "displayName": "VarLens",
   "description": "",
-  "version": "0.2.3",
+  "version": "0.2.2",
   "icon": "logo/logo.png",
   "engines": {
-    "vscode": "^1.83.0"
+    "vscode": "^1.96.0"
   },
   "categories": [
     "Other"
