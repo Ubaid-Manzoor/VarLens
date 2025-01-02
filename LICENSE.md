@@ -19,5 +19,5 @@ You are not allowed to:
 - Redistribution of the extension, either in whole or in part, is strictly prohibited.
 - Commercial use of the extension is not allowed.
 
-For any requests or inquiries, please contact the author at [your-email@example.com].
+For any requests or inquiries, please contact the author at [ubaidmanzoor12@gmail.com].
 
