@@ -1,6 +1,50 @@
-const { getCompleteVariable, getUniqueFilePath, traverseFile } = require("./utils.js");
+const { getCompleteVariable, getUniqueFilePath, traverseFile, saveNodeToDisk } = require("./utils.js");
 
 const vscode = require("vscode");
+
+const debugHandler = (session) => {
+  if (session.type === "node" || session.type === "pwa-node") {
+    vscode.window.showInformationMessage("VarLen is watching you debug session...");
+    const debugSessionHandler = vscode.debug.registerDebugAdapterTrackerFactory("*", {
+      createDebugAdapterTracker() {
+        let currentStackTrace = [];
+        let currentScope = [];
+        let currentVariables = [];
+        let nodesPerFile = {};
+        return {
+          onWillReceiveMessage(message) {
+            onWillReceiveMessageHandler({
+              message,
+              currentScope,
+              currentStackTrace,
+              currentVariables,
+            });
+          },
+          async onDidSendMessage(message) {
+            await onDidSendMessageHandler({
+              message,
+              currentScope,
+              currentStackTrace,
+              currentVariables,
+              nodesPerFile,
+            });
+          },
+          onError(error) {
+            console.error("Debug adapter error:", error);
+          },
+          onExit(code, signal) {
+            console.log("Debug adapter exit:", code, signal);
+          },
+          async onWillStopSession() {
+            await saveNodeToDisk(nodesPerFile);
+            console.log("Stop Session");
+          },
+        };
+      },
+    });
+    context.subscriptions.push(debugSessionHandler);
+  }
+};
 
 const onDidSendMessageHandler = async ({ message, currentStackTrace, currentScope, currentVariables, nodesPerFile }) => {
   try {
@@ -63,6 +107,20 @@ const onDidSendMessageHandler = async ({ message, currentStackTrace, currentScop
   }
 };
 
+const onWillReceiveMessageHandler = ({ message, currentScope, currentStackTrace, currentVariables }) => {
+  if (message.type === "request") {
+    if (message.command === "stackTrace") {
+      currentStackTrace.push({ request: message });
+    } else if (message.command === "scopes") {
+      currentScope.push({ request: message });
+    } else if (message.command === "variables") {
+      currentVariables.push({ request: message });
+    }
+  }
+};
+
 module.exports = {
+  debugHandler,
+  onWillReceiveMessageHandler,
   onDidSendMessageHandler,
 };

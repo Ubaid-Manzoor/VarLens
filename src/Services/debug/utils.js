@@ -1,6 +1,4 @@
-const { CACHE_FILE } = require("../../Constants/config.js");
-
-const { fetchSerializerFunction } = require("./serialize.js");
+const { CACHE_FILE } = require("../../config/constants");
 
 const vscode = require("vscode");
 const fs = require("fs");
@@ -177,18 +175,18 @@ const isEmptyValue = (value) => {
 const shouldUpdateValue = (existingValue, newValue) => {
   // If no existing value, accept any new value
   if (existingValue === undefined) return true;
-  
+
   // Don't overwrite with empty values
   if (isEmptyValue(newValue)) return false;
-  
-  // Special case: if existing is an object/array with data, 
+
+  // Special case: if existing is an object/array with data,
   // only update if new value has more or equal properties/elements
   if (typeof existingValue === "object" && existingValue !== null) {
     const existingSize = Object.keys(existingValue).length;
     const newSize = Object.keys(newValue || {}).length;
     return newSize >= existingSize;
   }
-  
+
   return true;
 };
 
@@ -243,9 +241,102 @@ const saveNodeToDisk = async (nodes) => {
   }
 };
 
+const fetchSerializerFunction = (variableName) => {
+  return `
+                            const serializeValue = function(value, depth = 0, maxDepth = 3, seen = new WeakSet()) {
+                                // Handle max depth
+                                if (depth > maxDepth) return '...';
+    
+                                // Handle primitives
+                                if (value === null) return null;
+                                if (value === undefined) return undefined;
+                                if (typeof value !== 'object' && typeof value !== 'function') {
+                                    return value;
+                                }
+    
+                                // Handle circular references
+                                if (value && typeof value === 'object') {
+                                    if (seen.has(value)) return '[Circular]';
+                                    seen.add(value);
+                                }
+    
+                                // Handle Date
+                                if (value instanceof Date) {
+                                    return {
+                                        __type: 'Date',
+                                        value: value.toISOString()
+                                    };
+                                }
+    
+                                // Handle arrays
+                                if (Array.isArray(value)) {
+                                    return value.slice(0,1).map(item => serializeValue(item, depth + 1, maxDepth, seen));
+                                }
+    
+                                // Handle Map
+                                if (value instanceof Map) {
+                                    return {
+                                        __type: 'Map',
+                                        value: Object.fromEntries(
+                                            Array.from(value.entries()).map(([k, v]) => [
+                                                serializeValue(k, depth + 1, maxDepth, seen),
+                                                serializeValue(v, depth + 1, maxDepth, seen)
+                                            ])
+                                        )
+                                    };
+                                }
+    
+                                // Handle Set
+                                if (value instanceof Set) {
+                                    return {
+                                        __type: 'Set',
+                                        value: Array.from(value).map(item => 
+                                            serializeValue(item, depth + 1, maxDepth, seen)
+                                        )
+                                    };
+                                }
+    
+                                // Handle functions
+                                if (typeof value === 'function') {
+                                    return {
+                                        __type: 'Function',
+                                        value: value.toString()
+                                    }
+                                }
+    
+                                // Handle regular objects and class instances
+                                const result = {};
+                                const isClass = value.constructor && value.constructor.name !== 'Object';
+                                if (isClass) {
+                                    result.__info = {
+                                        type: 'Class',
+                                        class: value.constructor.name
+                                    }
+                                }
+    
+                                const props = Object.getOwnPropertyNames(value);
+                                for (const prop of props) {
+                                    try {
+                                        const descriptor = Object.getOwnPropertyDescriptor(value, prop);
+                                        if (descriptor.get || descriptor.set) {
+                                            result[prop] = '<getter/setter>';
+                                        } else {
+                                            result[prop] = serializeValue(value[prop], depth + 1, maxDepth, seen);
+                                        }
+                                    } catch (error) {
+                                        result[prop] = '<error>';
+                                    }
+                                }
+                                return result;
+                            }
+                            JSON.stringify(serializeValue(${variableName}), null, 2);
+    `;
+};
+
 module.exports = {
   getCompleteVariable,
   traverseFile,
   getUniqueFilePath,
   saveNodeToDisk,
+  fetchSerializerFunction,
 };

@@ -1,6 +1,6 @@
-const { CACHE_FILE } = require("../../Constants/config");
+const { CACHE_FILE } = require("../../config/constants");
 
-const { traverseFile } = require("../Debuger/utils");
+const { traverseFile } = require("../debug/utils");
 
 const vscode = require("vscode");
 const fs = require("fs");
