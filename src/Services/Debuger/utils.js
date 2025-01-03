@@ -165,6 +165,33 @@ const getUniqueFilePath = (filePath) => {
   }
   return `unknown.${filePath.split("/").pop()}`;
 };
+const isEmptyValue = (value) => {
+  if (value === undefined || value === null) return true;
+  if (value === "undefined" || value === "null") return true;
+  if (Array.isArray(value) && value.length === 0) return true;
+  if (typeof value === "object" && Object.keys(value).length === 0) return true;
+  if (value === "") return true;
+  return false;
+};
+
+const shouldUpdateValue = (existingValue, newValue) => {
+  // If no existing value, accept any new value
+  if (existingValue === undefined) return true;
+  
+  // Don't overwrite with empty values
+  if (isEmptyValue(newValue)) return false;
+  
+  // Special case: if existing is an object/array with data, 
+  // only update if new value has more or equal properties/elements
+  if (typeof existingValue === "object" && existingValue !== null) {
+    const existingSize = Object.keys(existingValue).length;
+    const newSize = Object.keys(newValue || {}).length;
+    return newSize >= existingSize;
+  }
+  
+  return true;
+};
+
 const saveNodeToDisk = async (nodes) => {
   try {
     // 📌 Step 1: Build finalMap
@@ -200,10 +227,13 @@ const saveNodeToDisk = async (nodes) => {
       }
     }
 
-    console.log({ existingNodes, finalMap });
-    // 📌 Step 4: Merge existing data with finalMap
-    const mergedData = { ...existingNodes, ...finalMap };
-    console.log({ mergedData });
+    // 📌 Step 4: Merge existing data with finalMap, preserving valuable existing values
+    const mergedData = { ...existingNodes };
+    for (const [key, newData] of Object.entries(finalMap)) {
+      if (shouldUpdateValue(existingNodes[key]?.value, newData.value)) {
+        mergedData[key] = newData;
+      }
+    }
 
     // 📌 Step 5: Write back to the hidden file
     await fs.writeFileSync(cacheFilePath, JSON.stringify(mergedData, null, 2), "utf-8");

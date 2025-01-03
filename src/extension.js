@@ -22,6 +22,15 @@ function activate(context) {
 
   let cachedVariables = null;
 
+  // Initial cache load when VS Code starts
+  readVariableFromCache()
+    .then((variables) => {
+      cachedVariables = variables;
+    })
+    .catch((error) => {
+      console.error("Failed to load initial cache:", error);
+    });
+
   // Watch for file changes
   const cacheFileWatcher = vscode.workspace.createFileSystemWatcher(`**/${CACHE_FILE}`);
   cacheFileWatcher.onDidChange(async () => {
