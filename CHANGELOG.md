@@ -29,3 +29,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - v2.4 Added in-memory caching to significantly improve hover response time
 - v2.4 Optimized file reading by only reloading cache when file changes
+
+### Added
+
+- v2.6 Smart value updation
+- v2.6 Added Load cache values on vscode start.
+- v2.6 Handled Switch case
