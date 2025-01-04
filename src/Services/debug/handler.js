@@ -2,7 +2,7 @@ const { getCompleteVariable, getUniqueFilePath, traverseFile, saveNodeToDisk } =
 
 const vscode = require("vscode");
 
-const debugHandler = (session) => {
+const debugHandler = ({ session, context }) => {
   if (session.type === "node" || session.type === "pwa-node") {
     vscode.window.showInformationMessage("VarLen is watching you debug session...");
     const debugSessionHandler = vscode.debug.registerDebugAdapterTrackerFactory("*", {

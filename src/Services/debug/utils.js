@@ -106,9 +106,7 @@ const traverseFile = ({ filePath }) => {
             nodeObj.nodeName = `${parent?.type}.${parent.right.name}`;
           } else if (parent?.type === "ForOfStatement") {
             nodeObj.nodeName = `${parent?.type}.${parent.right.name}`;
-          } else if (parent?.type === "BlockStatement") {
           } else if (parent?.type === "WhileStatement") {
-          } else if (parent?.type === "SwitchCase") {
           } else if (parent?.type === "DoWhileStatement") {
           } else if (parent?.type === "WithStatement") {
           } else if (parent?.type === "StaticBlock") {
@@ -118,13 +116,26 @@ const traverseFile = ({ filePath }) => {
 
           scopeStack.push(nodeObj.nodeName);
           nodeObj.scopeChain = scopeStack?.join(".");
-          // Nodes.push({ line: node?.loc?.start?.line, node, parent, scope });
+
           Nodes.push(nodeObj);
         }
-
         if (node.type === "ClassDeclaration") {
           scopeStack.push(node?.id?.name);
         }
+
+        // HANDLE OUTLIER CASES
+        if (node.type === "SwitchStatement") {
+          const nodeName = `SwitchStatement(${node?.discriminant?.name})`;
+          scopeStack.push(nodeName);
+          Nodes.push({
+            scopeChain: scopeStack?.join("."),
+            nodeName,
+            loc: node?.loc,
+            blockSize: node?.loc?.end?.line - node?.loc?.start?.line,
+            bindings: scope.bindings,
+          });
+        }
+
         if (node?.type === "Program") {
           Nodes.push({
             nodeName: node?.type,

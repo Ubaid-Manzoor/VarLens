@@ -39,7 +39,7 @@ function activate(context) {
 
   // Monitor debug sessions to capture function outputs
   vscode.debug.onDidStartDebugSession(async (session) => {
-    debugHandler(session);
+    debugHandler({ session, context });
   });
 
   // Register the command that gets triggered on click
