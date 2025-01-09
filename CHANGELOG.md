@@ -35,3 +35,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - v2.6 Smart value updation
 - v2.6 Added Load cache values on vscode start.
 - v2.6 Handled Switch case
+
+### Fixed bug
+
+- v2.10 Nested variables full value not stored properly

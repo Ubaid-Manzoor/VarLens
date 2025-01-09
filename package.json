@@ -1,14 +1,21 @@
 {
   "name": "varlens",
   "displayName": "VarLens",
-  "description": "",
-  "version": "0.2.6",
+  "description": "VarLens is a powerful Visual Studio Code extension that transforms your debugging experience by providing variable inspection and persistent state tracking across debugging sessions. 🚀",
+  "version": "0.2.9",
   "icon": "logo/logo.png",
   "engines": {
     "vscode": "^1.96.0"
   },
   "categories": [
-    "Other"
+    "Debuggers",
+    "Programming Languages",
+    "Other",
+    "Visualization",
+    "Testing",
+    "Formatters",
+    "Education",
+    "Snippets"
   ],
   "activationEvents": [
     "onLanguage:javascript",
@@ -55,5 +62,47 @@
     "@babel/parser": "^7.26.3",
     "@babel/traverse": "^7.26.4",
     "npm-run-all": "^4.1.5"
-  }
+  },
+  "keywords": [
+    "varlens",
+    "var-lens",
+    "variable lens",
+    "variable-inspector",
+    "variable-viewer",
+    "debugger",
+    "debug",
+    "debugging",
+    "debug-tools",
+    "javascript",
+    "typescript",
+    "js",
+    "ts",
+    "state",
+    "state-management",
+    "state-inspector",
+    "hover",
+    "hover-preview",
+    "variable-preview",
+    "code-inspection",
+    "development",
+    "developer-tools",
+    "inspect",
+    "inspector",
+    "variable-state",
+    "variable-tracking",
+    "value-inspector",
+    "object-viewer",
+    "json-viewer",
+    "scope-inspector",
+    "scope-aware",
+    "debug-memory",
+    "debug-state",
+    "debug-variables",
+    "variable-history",
+    "code-analysis",
+    "runtime-values",
+    "value-tracker",
+    "variable-explorer",
+    "debug-explorer"
+  ]
 }

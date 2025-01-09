@@ -17,7 +17,7 @@ const getCompleteVariable = async (session, variableName, variableType, frameId)
       context: "inline",
     });
 
-    let result = response.result.replace(/\'/g, "").replace(/\\\\n/g, "").replace(/\\\\/g, "\\");
+    let result = response.result.replace(/\`/g, "").replace(/\'/g, "").replace(/\\\\n/g, "").replace(/\\\\/g, "\\");
     if (result === undefined || result === null) return result;
     if (result === "undefined" || result === "null") return result === "undefined" ? undefined : null;
     return JSON.parse(result);
