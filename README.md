@@ -2,6 +2,12 @@
 
 VarLens is a powerful Visual Studio Code extension that transforms your debugging experience by providing variable inspection and persistent state tracking across debugging sessions.
 
+## 🎥 Demo
+
+Watch VarLens in action:
+
+[![VarLens Demo](https://img.youtube.com/vi/OqaalNZ-0Wk/0.jpg)](https://youtu.be/OqaalNZ-0Wk)
+
 ## 🌟 Features
 
 ### 1. Smart Variable Inspection

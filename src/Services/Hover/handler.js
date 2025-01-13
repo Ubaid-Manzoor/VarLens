@@ -1,18 +1,20 @@
 const { getUniqueFilePath } = require("../debug/utils");
-const { fetchNodeByPosition, markdownOnHover, readVariableFromCache } = require("./utils");
+const { fetchNodeByPosition, markdownOnHover } = require("./utils");
 
-const hoverHandler = async ({ document, position, cachedVariables }) => {
+const hoverHandler = async ({ document, position, cachedVariables, stateManager }) => {
   const block = fetchNodeByPosition({ document, position });
+
+  // Get variables from stateManager if not cached
   if (!cachedVariables) {
-    cachedVariables = await readVariableFromCache();
+    cachedVariables = await stateManager.get();
   }
-  const variables = cachedVariables;
+
   const wordRange = document.getWordRangeAtPosition(position);
   if (wordRange) {
     const word = document.getText(wordRange);
     const uniqueFilePath = getUniqueFilePath(document.fileName);
     const uniqueKey = `${uniqueFilePath}.${block.scopeChain}.${word}`.replace(/\.{2,}/g, ".");
-    return markdownOnHover(variables[uniqueKey]?.value);
+    return markdownOnHover(cachedVariables[uniqueKey]?.value);
   }
   return null;
 };

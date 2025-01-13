@@ -174,82 +174,32 @@ const getUniqueFilePath = (filePath) => {
   }
   return `unknown.${filePath.split("/").pop()}`;
 };
-const isEmptyValue = (value) => {
-  if (value === undefined || value === null) return true;
-  if (value === "undefined" || value === "null") return true;
-  if (Array.isArray(value) && value.length === 0) return true;
-  if (typeof value === "object" && Object.keys(value).length === 0) return true;
-  if (value === "") return true;
-  return false;
-};
 
-const shouldUpdateValue = (existingValue, newValue) => {
-  // If no existing value, accept any new value
-  if (existingValue === undefined) return true;
-
-  // Don't overwrite with empty values
-  if (isEmptyValue(newValue)) return false;
-
-  // Special case: if existing is an object/array with data,
-  // only update if new value has more or equal properties/elements
-  if (typeof existingValue === "object" && existingValue !== null) {
-    const existingSize = Object.keys(existingValue).length;
-    const newSize = Object.keys(newValue || {}).length;
-    return newSize >= existingSize;
-  }
-
-  return true;
-};
-
-const saveNodeToDisk = async (nodes) => {
-  try {
-    // 📌 Step 1: Build finalMap
-    const finalMap = {};
-    for (const uniquePathKey of Object.keys(nodes)) {
-      for (const node of nodes[uniquePathKey]) {
-        const { scopeChain, variables } = node;
-        if (variables && variables.length > 0) {
-          for (const variable of variables) {
-            const key = `${uniquePathKey}.${scopeChain}.${variable.name}`.replace(/\.{2,}/g, ".");
-            finalMap[key] = {
-              type: variable.type,
-              value: variable.value,
-            };
-          }
-        }
-      }
-    }
-
-    // 📌 Step 2: Define the hidden file path
-    const workspacePath = vscode.workspace.workspaceFolders[0].uri.fsPath;
-    const cacheFilePath = path.join(workspacePath, CACHE_FILE);
-
-    // 📌 Step 3: Load existing data if the file exists
-    let existingNodes = {};
+const saveNodeToDisk = async (nodes, stateManager) => {
     try {
-      const data = await fs.readFileSync(cacheFilePath, { encoding: "utf8" });
-      existingNodes = JSON.parse(data);
+        // 📌 Step 1: Build finalMap (your existing logic)
+        const finalMap = {};
+        for (const uniquePathKey of Object.keys(nodes)) {
+            for (const node of nodes[uniquePathKey]) {
+                const { scopeChain, variables } = node;
+                if (variables && variables.length > 0) {
+                    for (const variable of variables) {
+                        const key = `${uniquePathKey}.${scopeChain}.${variable.name}`.replace(/\.{2,}/g, ".");
+                        finalMap[key] = {
+                            type: variable.type,
+                            value: variable.value,
+                        };
+                    }
+                }
+            }
+        }
+
+        // 📌 Step 2: Save to state instead of file
+        await stateManager.update(finalMap);
+        console.log('✅ Data saved successfully to state');
     } catch (error) {
-      if (error.code !== "ENOENT") {
-        console.error("Failed to read the cache file:", error);
-        existingNodes = {};
-      }
+        console.error("❌ Failed to save nodes:", error);
     }
-
-    // 📌 Step 4: Merge existing data with finalMap, preserving valuable existing values
-    const mergedData = { ...existingNodes };
-    for (const [key, newData] of Object.entries(finalMap)) {
-      if (shouldUpdateValue(existingNodes[key]?.value, newData.value)) {
-        mergedData[key] = newData;
-      }
-    }
-
-    // 📌 Step 5: Write back to the hidden file
-    await fs.writeFileSync(cacheFilePath, JSON.stringify(mergedData, null, 2), "utf-8");
-    console.log(`✅ Data saved successfully to ${cacheFilePath}`);
-  } catch (error) {
-    console.error("❌ Failed to save nodes to disk:", error);
-  }
 };
 
 const fetchSerializerFunction = (variableName) => {

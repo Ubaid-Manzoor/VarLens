@@ -2,7 +2,7 @@
   "name": "varlens",
   "displayName": "VarLens",
   "description": "VarLens is a powerful Visual Studio Code extension that transforms your debugging experience by providing variable inspection and persistent state tracking across debugging sessions. 🚀",
-  "version": "0.2.9",
+  "version": "0.2.11",
   "icon": "logo/logo.png",
   "engines": {
     "vscode": "^1.96.0"
@@ -21,13 +21,13 @@
     "onLanguage:javascript",
     "onLanguage:typescript"
   ],
-  "main": "./dist/extension.js",
+  "main": "./src/extension.js",
   "publisher": "ubaid",
   "contributes": {
     "commands": [
       {
-        "command": "extension.inspectVariable",
-        "title": "Inspect Variable"
+        "command": "varlens.showState",
+        "title": "VarLen | ShowState"
       }
     ]
   },

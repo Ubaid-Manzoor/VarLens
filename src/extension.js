@@ -1,53 +1,45 @@
+const StateManager = require("./services/StateManagement/StateManager.js");
+
 const { inspectVariableCommandHandler } = require("./services/commands/inspectVariableHandler.js");
 const { hoverHandler } = require("./services/hover/handler.js");
-const { CACHE_FILE } = require("./config/constants.js");
-const { excludeCacheFile } = require("./services/utils.js");
 const { debugHandler } = require("./services/debug/handler.js");
-const { readVariableFromCache } = require("./services/hover/utils.js");
 
 const vscode = require("vscode");
 
-/**
- * @param {vscode.ExtensionContext} context
- */
 function activate(context) {
-  excludeCacheFile();
-
+  const stateManager = new StateManager(context);
   let cachedVariables = null;
-
-  // Initial cache load when VS Code starts
-  readVariableFromCache()
-    .then((variables) => {
-      cachedVariables = variables;
-    })
-    .catch((error) => {
-      console.error("Failed to load initial cache:", error);
-    });
-
-  // Watch for file changes
-  const cacheFileWatcher = vscode.workspace.createFileSystemWatcher(`**/${CACHE_FILE}`);
-  cacheFileWatcher.onDidChange(async () => {
-    cachedVariables = await readVariableFromCache();
+  stateManager.get().then((variables) => {
+    cachedVariables = variables;
+    console.log("Initial state loaded");
   });
+
+  // Migrate legacy cache if needed
+  stateManager.initialize().catch((error) => console.error("Failed to initialize state manager:", error));
+  const debugCommand = vscode.commands.registerCommand("varlens.showState", () => stateManager.showCurrentState());
 
   const hoverProvider = vscode.languages.registerHoverProvider(["javascript", "typescript"], {
     async provideHover(document, position) {
-      return await hoverHandler({ document, position, cachedVariables });
+      return await hoverHandler({
+        document,
+        position,
+        cachedVariables,
+        stateManager,
+      });
     },
   });
+
+  vscode.debug.onDidStartDebugSession(async (session) => await debugHandler({ session, context, stateManager }));
+  const inspectVariableCommand = vscode.commands.registerCommand("varlens.inspectVariable", async (variableValue) => await inspectVariableCommandHandler({ variableValue }));
+
+  context.subscriptions.push(debugCommand);
   context.subscriptions.push(hoverProvider);
-
-  // Monitor debug sessions to capture function outputs
-  vscode.debug.onDidStartDebugSession(async (session) => {
-    debugHandler({ session, context });
-  });
-
-  // Register the command that gets triggered on click
-  const inspectVariableCommand = vscode.commands.registerCommand("extension.inspectVariable", async (variableValue) => {
-    inspectVariableCommandHandler({ variableValue });
-  });
-
   context.subscriptions.push(inspectVariableCommand);
+  context.subscriptions.push(
+    stateManager.onDidChangeState(async (newState) => {
+      cachedVariables = newState;
+    })
+  );
 }
 
 // This method is called when your extension is deactivated
