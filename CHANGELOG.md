@@ -39,3 +39,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Fixed bug
 
 - v2.10 Nested variables full value not stored properly
+
+### Improvements (v0.2.12)
+
+- Improved reliability by moving from .varlens-cache file to VS Code's native storage system
+- Added new command to inspect current variable state
+- Automatic migration of existing data from .varlens-cache
+- No more .varlens-cache file in your workspace - cleaner project structure
