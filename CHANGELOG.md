@@ -46,3 +46,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Added new command to inspect current variable state
 - Automatic migration of existing data from .varlens-cache
 - No more .varlens-cache file in your workspace - cleaner project structure
+
+### Added (v0.2.13)
+
+- New Export Debug State command to save your debug data
+- New Import Debug State command to load previously saved data
+- Share debug states across different projects or with team members
+- Backup and restore your debug session data
