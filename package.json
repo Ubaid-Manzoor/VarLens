@@ -28,6 +28,14 @@
       {
         "command": "varlens.showState",
         "title": "VarLen | ShowState"
+      },
+      {
+        "command": "varlens.exportState",
+        "title": "VarLens: Export Debug State"
+      },
+      {
+        "command": "varlens.importState",
+        "title": "VarLens: Import Debug State"
       }
     ]
   },

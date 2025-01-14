@@ -122,6 +122,58 @@ class StateManager extends EventEmitter {
             </html>
         `;
   }
+
+  async exportState() {
+    try {
+      const currentState = await this.get();
+      const exportData = {
+        timestamp: Date.now(),
+        state: currentState,
+      };
+
+      const uri = await vscode.window.showSaveDialog({
+        defaultUri: vscode.Uri.file("varlens.json"),
+        filters: {
+          "JSON files": ["json"],
+        },
+      });
+
+      if (uri) {
+        await vscode.workspace.fs.writeFile(uri, Buffer.from(JSON.stringify(exportData, null, 2)));
+
+        vscode.window.showInformationMessage("Debug state exported successfully!");
+      }
+    } catch (error) {
+      vscode.window.showErrorMessage("Failed to export state: " + error.message);
+    }
+  }
+
+  async importState() {
+    try {
+      const uri = await vscode.window.showOpenDialog({
+        canSelectFiles: true,
+        canSelectFolders: false,
+        canSelectMany: false,
+        filters: {
+          "JSON files": ["json"],
+        },
+      });
+
+      if (uri && uri[0]) {
+        const fileContent = await vscode.workspace.fs.readFile(uri[0]);
+        const importData = JSON.parse(fileContent.toString());
+
+        if (!importData.timestamp || !importData.state) {
+          throw new Error("Invalid import file format");
+        }
+
+        await this.update(importData.state);
+        vscode.window.showInformationMessage("Debug state imported successfully!");
+      }
+    } catch (error) {
+      vscode.window.showErrorMessage("Failed to import state: " + error.message);
+    }
+  }
 }
 
 module.exports = StateManager;

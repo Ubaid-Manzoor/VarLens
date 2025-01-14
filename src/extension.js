@@ -31,7 +31,11 @@ function activate(context) {
 
   vscode.debug.onDidStartDebugSession(async (session) => await debugHandler({ session, context, stateManager }));
   const inspectVariableCommand = vscode.commands.registerCommand("varlens.inspectVariable", async (variableValue) => await inspectVariableCommandHandler({ variableValue }));
+  const exportCommand = vscode.commands.registerCommand("varlens.exportState", () => stateManager.exportState());
+  const importCommand = vscode.commands.registerCommand("varlens.importState", () => stateManager.importState());
 
+  context.subscriptions.push(exportCommand);
+  context.subscriptions.push(importCommand);
   context.subscriptions.push(debugCommand);
   context.subscriptions.push(hoverProvider);
   context.subscriptions.push(inspectVariableCommand);
