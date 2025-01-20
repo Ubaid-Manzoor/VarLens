@@ -53,3 +53,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - New Import Debug State command to load previously saved data
 - Share debug states across different projects or with team members
 - Backup and restore your debug session data
+
+### Fixed (v0.2.15)
+
+- Fixed function parameters not being captured in debug state

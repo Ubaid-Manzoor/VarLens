@@ -20,6 +20,7 @@ See how to share debug states with your team:
 - **Hover Intelligence**: Simply hover over any variable to instantly see its value
 - **Context-Aware**: Understands variable scope and maintains accurate values across different code blocks
 - **Rich Visualization**: View complex objects and arrays in a formatted JSON structure
+- **Complete Parameter Tracking**: Capture and inspect function parameters across all scopes
 
 ### 2. Advanced Variable Inspector
 - **Interactive JSON Viewer**: Click the 🔍 icon to open a dedicated panel with a full-featured JSON editor
@@ -47,9 +48,9 @@ See how to share debug states with your team:
 ## 💡 Usage Example
 
 ```javascript
-function calculateTotal(items) {
+function calculateTotal(items, taxRate = 0.1) {  // Both parameters are now tracked!
     const total = items.reduce((sum, item) => sum + item.price, 0);
-    const tax = total * 0.1;  // Hover over 'total' or 'tax' to see values!
+    const tax = total * taxRate;  // Hover over 'total', 'tax', or 'taxRate' to see values!
     return total + tax;
 }
 ```
