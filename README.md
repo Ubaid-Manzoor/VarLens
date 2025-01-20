@@ -8,6 +8,12 @@ Watch VarLens in action:
 
 [![VarLens Demo](https://img.youtube.com/vi/OqaalNZ-0Wk/0.jpg)](https://youtu.be/OqaalNZ-0Wk)
 
+### 🤝 Sharing Debug States Demo
+
+See how to share debug states with your team:
+
+[![VarLens Sharing Demo](https://img.youtube.com/vi/fTHQxXfo-2M/0.jpg)](https://youtu.be/fTHQxXfo-2M)
+
 ## 🌟 Features
 
 ### 1. Smart Variable Inspection
@@ -24,6 +30,11 @@ Watch VarLens in action:
 - **Persistent State**: Variables values are cached and preserved across debugging sessions
 - **Scope Recognition**: Maintains variable values with respect to their scope chains
 - **Automatic Tracking**: No configuration needed - just debug as usual!
+
+### 4. Share Debug States
+- **Export Debug States**: Save your debug session data to share with team members
+- **Import Debug States**: Load debug states from other developers
+- **Cross-Project Support**: Use debug data across different projects
 
 ## 🚀 Getting Started
 

@@ -88,6 +88,7 @@ const traverseFile = ({ filePath }) => {
             nodeObj.nodeName = name;
           } else if (scope?.block?.type === "FunctionDeclaration") {
             nodeObj.nodeName = parent?.id?.name;
+            nodeObj.params = parent?.params;
           } else if (scope?.block?.type === "FunctionExpression") {
             if (scope?.parentBlock?.type === "ObjectProperty") {
               nodeObj.nodeName = scope?.parentBlock?.key?.name;
@@ -176,30 +177,30 @@ const getUniqueFilePath = (filePath) => {
 };
 
 const saveNodeToDisk = async (nodes, stateManager) => {
-    try {
-        // 📌 Step 1: Build finalMap (your existing logic)
-        const finalMap = {};
-        for (const uniquePathKey of Object.keys(nodes)) {
-            for (const node of nodes[uniquePathKey]) {
-                const { scopeChain, variables } = node;
-                if (variables && variables.length > 0) {
-                    for (const variable of variables) {
-                        const key = `${uniquePathKey}.${scopeChain}.${variable.name}`.replace(/\.{2,}/g, ".");
-                        finalMap[key] = {
-                            type: variable.type,
-                            value: variable.value,
-                        };
-                    }
-                }
-            }
+  try {
+    // 📌 Step 1: Build finalMap (your existing logic)
+    const finalMap = {};
+    for (const uniquePathKey of Object.keys(nodes)) {
+      for (const node of nodes[uniquePathKey]) {
+        const { scopeChain, variables } = node;
+        if (variables && variables.length > 0) {
+          for (const variable of variables) {
+            const key = `${uniquePathKey}.${scopeChain}.${variable.name}`.replace(/\.{2,}/g, ".");
+            finalMap[key] = {
+              type: variable.type,
+              value: variable.value,
+            };
+          }
         }
-
-        // 📌 Step 2: Save to state instead of file
-        await stateManager.update(finalMap);
-        console.log('✅ Data saved successfully to state');
-    } catch (error) {
-        console.error("❌ Failed to save nodes:", error);
+      }
     }
+
+    // 📌 Step 2: Save to state instead of file
+    await stateManager.update(finalMap);
+    console.log("✅ Data saved successfully to state");
+  } catch (error) {
+    console.error("❌ Failed to save nodes:", error);
+  }
 };
 
 const fetchSerializerFunction = (variableName) => {
